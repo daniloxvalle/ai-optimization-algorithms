@@ -1,6 +1,5 @@
 from math import sqrt
 import random
-from typing import List
 
 import numpy as np
 import pandas as pd
@@ -34,7 +33,7 @@ class TSPFunctions:
     # Receives a list with the real coordinates of a city and
     # generates a distance matrix between the cities.
     # Note: the matrix is symmetric and with a null diagonal
-    def generate_tsp_problem(self, df_cities):
+    def generate_tsp_problem(self, df_cities: pd.DataFrame) -> pd.DataFrame:
         # fictitious city names
         cities = df_cities.index
 
@@ -93,9 +92,12 @@ class TSPFunctions:
 
     def generate_neighbor(self, route):
         new_route = route.copy()
-        index_a = random.randint(0, len(route) - 1)
-        index_b = random.randint(0, len(route) - 1)
+
+        # Use random.sample to get two different indices
+        index_a, index_b = random.sample(range(len(route)), 2)
+
         new_route[index_a], new_route[index_b] = new_route[index_b], new_route[index_a]
+
         return new_route
 
     # From a given solution, generates several variations (neighbors)
