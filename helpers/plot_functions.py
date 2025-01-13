@@ -68,3 +68,81 @@ class PlotFunctions:
         axes.set_title("Cost of Algorithms", fontsize=fontsize)
         # Display the plot
         plt.show()
+
+    def plot_path(self, cities_xy, cities_path, ax):
+
+        # Reeordena as cidades pela ordem do caminho
+        cities = cities_xy[cities_path]
+
+        # Repete a primeira cidade para fechar o ciclo
+        x = cities[:, 0]
+        y = cities[:, 1]
+
+        # Personalização do gráfico
+        ax.set_xlabel("X (Longitude)")
+        ax.set_ylabel("Y (Latitude)")
+        ax.set_title("Caminho")
+
+        # Plotagem das coordenadas interligadas com pontos vermelhos e linhas azuis
+        ax.plot(x, y, color="blue", linestyle="-", linewidth=2)
+        ax.plot(x, y, color="red", marker="o", markersize=8, linestyle="")
+        ax.plot(x[[-1, 0]], y[[-1, 0]], color="orange", linestyle="-", linewidth=2)
+
+    def plot_distances(self, iteration_list, distance_list, best_distances, ax):
+        x = iteration_list
+        y1 = distance_list
+        y2 = best_distances
+
+        ax.set_xlabel("Iterations")
+        ax.set_ylabel("Distances (costs)")
+        ax.set_title("Total Path Length")
+
+        ax.plot(x, y1, label="Current")
+        ax.plot(x, y2, label="Best")
+        ax.legend()
+
+    def plot_axes_figure(self, iteration_list, distance_list, best_distances):
+        x = iteration_list
+        y1 = distance_list
+        y2 = best_distances
+
+        fig, ax = plt.subplots(figsize=(8, 6))
+
+        # Plot the distances
+        self.plot_distances(x, y1, y2, ax)
+
+        # Adjust the spacing between subplots
+        fig.tight_layout()
+
+        # Display the plot
+        plt.show()
+
+    def plot_10_cost_graphs(
+        self, iteration_lists, distance_lists, best_distances_lists, filepath
+    ):
+        num_graphs = min(
+            10, len(iteration_lists), len(distance_lists), len(best_distances_lists)
+        )
+        fig, axes = plt.subplots(5, 2, figsize=(10, 15))
+        axes = axes.flatten()  # Flatten the 2D array of axes for easy iteration
+
+        for i in range(num_graphs):
+            x = iteration_lists[i]
+            y1 = distance_lists[i]
+            y2 = best_distances_lists[i]
+
+            ax = axes[i]
+            self.plot_distances(x, y1, y2, ax)
+            ax.set_title(f"Execution: {i+1}")
+
+        # Adjust the spacing between subplots
+        fig.tight_layout()
+
+        # Display the plot
+        plt.show()
+
+        # Save the plot to a file
+        plt.savefig(filepath)
+
+        # Close the plot to free up memory
+        plt.close(fig)

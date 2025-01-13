@@ -85,7 +85,6 @@ class TSPFunctions:
             city_b = solution[k]
 
             cost += tsp.loc[city_a, city_b]
-
             # print(tsp.loc[cityA, cityB], cityA, cityB)
 
         return cost
@@ -103,22 +102,29 @@ class TSPFunctions:
     # From a given solution, generates several variations (neighbors)
     def generate_neighbors(self, solution):
         n = len(solution)
+        neighbors = []
         for i in range(1, n):  # keep the first fixed
             for j in range(i + 1, n):
                 neighbor = solution.copy()
                 neighbor[i] = solution[j]
                 neighbor[j] = solution[i]
-
-                yield neighbor
+                neighbors.append(neighbor)
+                # yield neighbor
+            neighbors.append(neighbor)
+        return neighbors
 
     def get_best_neighbor(self, tsp, solution):
         best_cost = self.calculate_cost(tsp, solution)
         best_neighbor = solution
+        objective_calls = 0
 
-        for neighbor in self.generate_neighbors(solution):
+        neighbors = self.generate_neighbors(solution)
+
+        for neighbor in neighbors:
             current_cost = self.calculate_cost(tsp, neighbor)
+            objective_calls += 1
             if current_cost < best_cost:
                 best_cost = current_cost
                 best_neighbor = neighbor
 
-        return best_neighbor, best_cost
+        return best_neighbor, best_cost, objective_calls

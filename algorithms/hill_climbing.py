@@ -4,40 +4,85 @@ from helpers.tsp_functions import TSPFunctions
 class HillClimbing:
     def __init__(self):
         self.tsp_functions = TSPFunctions()
-        self.num_restarts = 50  # default: 50
+        self.num_restarts = 4  # 50
 
-    def tsp_hill_climbing(self, tsp):
+    def tsp_hill_climbing(self, tsp, max_objective_calls):
         initial_solution = self.tsp_functions.random_solution(tsp)
-        # best solution so far
-        best_solution, best_cost = self.tsp_functions.get_best_neighbor(
-            tsp, initial_solution
+
+        best_solution, best_cost, first_objective_calls = (
+            self.tsp_functions.get_best_neighbor(tsp, initial_solution)
         )
 
-        while True:
-            # try to get a better candidate
-            new_candidate, new_cost = self.tsp_functions.get_best_neighbor(
-                tsp, best_solution
+        iteration_list = []
+        best_distances = []
+        distance_list = []
+
+        objective_calls = first_objective_calls
+        iteration = 0
+        while objective_calls < max_objective_calls:
+            new_candidate, new_cost, new_objective_calls = (
+                self.tsp_functions.get_best_neighbor(tsp, best_solution)
             )
 
             if new_cost < best_cost:
                 best_cost = new_cost
                 best_solution = new_candidate
-            else:
-                break  # cost did not improve, so exit the while
 
-        return best_cost, best_solution
+            iteration_list += [iteration]
+            best_distances += [best_cost]
+            distance_list += [best_cost]
+            iteration += 1
 
-    def tsp_hill_climbing_restart(self, tsp):
+            objective_calls += new_objective_calls
+
+        print("Iterations: ", iteration)
+        return (
+            best_cost,
+            best_solution,
+            iteration_list,
+            distance_list,
+            best_distances,
+        )
+
+    def tsp_hill_climbing_restart(self, tsp, max_objective_calls):
         # Initialize best solution tracking variables
         best_overall_cost = float("inf")
         best_overall_solution = None
 
+        max_attempt_objective_calls = max_objective_calls // self.num_restarts
+
+        iteration_list = []
+        best_distances = []
+        distance_list = []
+
         # Perform multiple hill climbing attempts with different starting points
         for _ in range(self.num_restarts):
-            current_cost, current_solution = self.tsp_hill_climbing(tsp)
+            (
+                current_cost,
+                current_solution,
+                attempt_iteration_list,
+                attempt_distance_list,
+                attempt_best_distances,
+            ) = self.tsp_hill_climbing(tsp, max_attempt_objective_calls)
+
+            for i in range(len(attempt_iteration_list)):
+                iteration_list += [len(iteration_list)]
+                if attempt_best_distances[i] < best_overall_cost:
+                    best_distances += [attempt_best_distances[i]]
+                else:
+                    best_distances += [best_overall_cost]
+
             # Update best solution if current solution is better
             if current_cost < best_overall_cost:
                 best_overall_cost = current_cost
                 best_overall_solution = current_solution
 
-        return best_overall_cost, best_overall_solution
+            distance_list += attempt_distance_list
+
+        return (
+            best_overall_cost,
+            best_overall_solution,
+            iteration_list,
+            distance_list,
+            best_distances,
+        )

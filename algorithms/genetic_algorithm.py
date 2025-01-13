@@ -1,6 +1,5 @@
 from typing import List, Tuple
 import random
-import numpy as np
 import pandas as pd
 
 from helpers.tsp_functions import TSPFunctions
@@ -9,27 +8,29 @@ from helpers.tsp_functions import TSPFunctions
 class GeneticAlgorithm:
     def __init__(self):
         self.tsp_functions = TSPFunctions()
-        self.population_size = 200  # 200
-        self.elite_percentage = 0.2  # 0.2
-        self.max_generations = 200  # 200
-        self.mutation_prob = 0.3  # 0.3
+        self.population_size = 100
+        self.elite_percentage = 0.2
+        self.mutation_prob = 0.2
 
-    def tsp_genetic_algorithm(self, tsp):
+    def tsp_genetic_algorithm(self, tsp, max_generations: int):
         population = self._generate_initial_population(tsp)
         elite_count = int(self.population_size * self.elite_percentage)
+        # If odd, increment by 1 to make even
+        if elite_count % 2 != 0:
+            elite_count += 1
 
-        for _ in range(self.max_generations):
+        for _ in range(max_generations):
+            cost_tuples = self._generate_cost_tuples(tsp, population)
+
             # Keep best individuals (elitism)
-            elites = self._elite_selection(tsp, population, elite_count)
-            # If odd, increment by 1 to make even
-            if elite_count % 2 != 0:
-                elite_count += 1
+            sorted_cost_tuples = sorted(cost_tuples, key=lambda x: x[0])
+            elites = sorted_cost_tuples[:elite_count]
 
             new_population = []
             for _ in range(self.population_size // 2 - elite_count // 2):
-                parent_1 = self._tournament_selection(tsp, population)
-                remaining_population = [p for p in population if p != parent_1]
-                parent_2 = self._tournament_selection(tsp, remaining_population)
+                parent_1 = self._tournament_selection(cost_tuples)
+                remaining_cost_tuple = [ct for ct in cost_tuples if ct != parent_1]
+                parent_2 = self._tournament_selection(remaining_cost_tuple)
 
                 child_1, child_2 = self._order_crossover_tsp(parent_1, parent_2)
 
@@ -40,37 +41,14 @@ class GeneticAlgorithm:
                 new_population.append(child_2)
 
             # Add elites directly to new population
-            new_population += elites
+            new_population += [elite[1] for elite in elites]
 
             population = new_population
-            best_individual = self._get_best_individual(tsp, population)[0]
-            print(f"Best distance: {best_individual}")
+            # best_individual = self._get_best_individual(tsp, population)[0]
+            best_individual = min(cost_tuples, key=lambda x: x[0])
+            # print(f"Best distance: {best_individual[0]}")
 
-        return self._get_best_individual(tsp, population)
-
-    def _elite_selection(
-        self, tsp: pd.DataFrame, population: List[List[int]], elite_count: int
-    ) -> List[List[int]]:
-        """Return the top 'elite_count' individuals with lowest cost from population."""
-        # Sort population by ascending route cost
-        sorted_population = sorted(
-            population, key=lambda ind: self.tsp_functions.calculate_cost(tsp, ind)
-        )
-        return sorted_population[:elite_count]
-
-    def _get_best_individual(
-        self, tsp: pd.DataFrame, population: List[List[int]]
-    ) -> List[int]:
-        best_cost = float("inf")
-        best_route = None
-
-        for route in population:
-            cost = self.tsp_functions.calculate_cost(tsp, route)
-            if cost < best_cost:
-                best_cost = cost
-                best_route = route
-
-        return best_cost, best_route
+        return best_individual
 
     def _order_crossover_tsp(
         self, parent_1: List[int], parent_2: List[int]
@@ -107,18 +85,20 @@ class GeneticAlgorithm:
         return child_1, child_2
 
     def _tournament_selection(
-        self, tsp: pd.DataFrame, population: List[List[int]]
+        self, cost_tuple: List[Tuple[float, List[int]]]
     ) -> List[int]:
-        candidate_1 = random.choice(population)
+        # Select first candidate
+        candidate_1 = random.choice(cost_tuple)
         # Select second candidate ensuring it's different
-        remaining_population = [p for p in population if p != candidate_1]
+        remaining_population = [ct for ct in cost_tuple if ct != candidate_1]
         candidate_2 = random.choice(remaining_population)
 
-        distance_1 = self.tsp_functions.calculate_cost(tsp, candidate_1)
-        distance_2 = self.tsp_functions.calculate_cost(tsp, candidate_2)
+        # Extract distances
+        distance_1, route_1 = candidate_1
+        distance_2, route_2 = candidate_2
 
         # Select candidate with shortest route
-        winner = candidate_1 if distance_1 <= distance_2 else candidate_2
+        winner = route_1 if distance_1 <= distance_2 else route_2
 
         return winner
 
