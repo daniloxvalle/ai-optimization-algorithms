@@ -1,8 +1,8 @@
 # Custom
 .vscode
+.DS_Store
 notebooks_professor
 _bin
-results_tsp
 results_tsp_used
 
 # Byte-compiled / optimized / DLL files

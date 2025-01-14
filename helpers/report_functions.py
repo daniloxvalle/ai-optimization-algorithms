@@ -23,7 +23,7 @@ class ReportFunctions:
         return df_results
 
     # Execute N times to generate cost variable statistics
-    def execute_n_times(
+    def execute_n_times_tsp(
         self,
         tsp,
         algorithms,
@@ -68,5 +68,42 @@ class ReportFunctions:
 
             if print_routes:
                 self.plot_functions.plot_routes(df_coordinates, best_solution)
+
+        return df_cost
+
+    def execute_n_times_rastrigin(
+        self,
+        algorithms,
+        n_times,
+        max_objective_calls,
+        print_costs=False,
+    ):
+        df_cost = self.create_costs_df(algorithms, n_times)
+
+        for algorithm, algorithm_function in algorithms.items():
+            print(algorithm)
+            iteration_lists = []
+            distance_lists = []
+            best_distances_lists = []
+
+            for i in range(n_times):
+                cost, solution, iteration_list, distance_list, best_distances = (
+                    algorithm_function(max_objective_calls)
+                )
+                df_cost.loc[algorithm, i] = cost
+
+                print(f"{cost:10.3f}  {solution}")
+
+                iteration_lists += [iteration_list]
+                distance_lists += [distance_list]
+                best_distances_lists += [best_distances]
+
+            if print_costs:
+                self.plot_functions.plot_10_cost_graphs(
+                    iteration_lists,
+                    distance_lists,
+                    best_distances_lists,
+                    filepath=f"results_rastrigin/{algorithm}.png",
+                )
 
         return df_cost
