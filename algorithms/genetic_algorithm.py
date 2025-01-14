@@ -8,19 +8,26 @@ from helpers.tsp_functions import TSPFunctions
 class GeneticAlgorithm:
     def __init__(self):
         self.tsp_functions = TSPFunctions()
-        self.population_size = 100
+        self.population_size = 200
         self.elite_percentage = 0.2
         self.mutation_prob = 0.2
 
-    def tsp_genetic_algorithm(self, tsp, max_generations: int):
+    # def tsp_genetic_algorithm(self, tsp, max_generations: int):
+    def tsp_genetic_algorithm(self, tsp, max_objective_calls: int):
         population = self._generate_initial_population(tsp)
         elite_count = int(self.population_size * self.elite_percentage)
         # If odd, increment by 1 to make even
         if elite_count % 2 != 0:
             elite_count += 1
 
-        for _ in range(max_generations):
+        objective_calls = 0
+        iteration_list = []
+        best_distances = []
+
+        while objective_calls < max_objective_calls:
             cost_tuples = self._generate_cost_tuples(tsp, population)
+
+            objective_calls += self.population_size
 
             # Keep best individuals (elitism)
             sorted_cost_tuples = sorted(cost_tuples, key=lambda x: x[0])
@@ -44,11 +51,17 @@ class GeneticAlgorithm:
             new_population += [elite[1] for elite in elites]
 
             population = new_population
-            # best_individual = self._get_best_individual(tsp, population)[0]
-            best_individual = min(cost_tuples, key=lambda x: x[0])
-            # print(f"Best distance: {best_individual[0]}")
+            best_individual, best_solution = min(cost_tuples, key=lambda x: x[0])
+            iteration_list.append(len(iteration_list))
+            best_distances += [best_individual]
 
-        return best_individual
+        return (
+            best_individual,
+            best_solution,
+            iteration_list,
+            best_distances,
+            best_distances,
+        )
 
     def _order_crossover_tsp(
         self, parent_1: List[int], parent_2: List[int]

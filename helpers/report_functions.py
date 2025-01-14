@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from helpers.plot_functions import PlotFunctions
+from helpers.coordinates import df_coordinates
 
 
 class ReportFunctions:
@@ -23,17 +24,24 @@ class ReportFunctions:
 
     # Execute N times to generate cost variable statistics
     def execute_n_times(
-        self, tsp, algorithms, n_times, max_objective_calls, print_costs=False
+        self,
+        tsp,
+        algorithms,
+        n_times,
+        max_objective_calls,
+        print_costs=False,
+        print_routes=False,
     ):
         # Create DataFrame to store the results
         df_cost = self.create_costs_df(algorithms, n_times)
 
         for algorithm, algorithm_function in algorithms.items():
-
             print(algorithm)
             iteration_lists = []
             distance_lists = []
             best_distances_lists = []
+            best_cost = float("inf")
+            best_solution = []
 
             for i in range(n_times):
                 cost, solution, iteration_list, distance_list, best_distances = (
@@ -42,6 +50,9 @@ class ReportFunctions:
                 df_cost.loc[algorithm, i] = cost
 
                 print(f"{cost:10.3f}  {solution}")
+                if cost < best_cost:
+                    best_cost = cost
+                    best_solution = solution
 
                 iteration_lists += [iteration_list]
                 distance_lists += [distance_list]
@@ -54,5 +65,8 @@ class ReportFunctions:
                     best_distances_lists,
                     filepath=f"results_tsp/{algorithm}.png",
                 )
+
+            if print_routes:
+                self.plot_functions.plot_routes(df_coordinates, best_solution)
 
         return df_cost

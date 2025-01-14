@@ -4,7 +4,7 @@ from helpers.tsp_functions import TSPFunctions
 class HillClimbing:
     def __init__(self):
         self.tsp_functions = TSPFunctions()
-        self.num_restarts = 4  # 50
+        self.num_restarts = 5
 
     def tsp_hill_climbing(self, tsp, max_objective_calls):
         initial_solution = self.tsp_functions.random_solution(tsp)
@@ -15,7 +15,6 @@ class HillClimbing:
 
         iteration_list = []
         best_distances = []
-        distance_list = []
 
         objective_calls = first_objective_calls
         iteration = 0
@@ -30,7 +29,6 @@ class HillClimbing:
 
             iteration_list += [iteration]
             best_distances += [best_cost]
-            distance_list += [best_cost]
             iteration += 1
 
             objective_calls += new_objective_calls
@@ -40,7 +38,7 @@ class HillClimbing:
             best_cost,
             best_solution,
             iteration_list,
-            distance_list,
+            best_distances,
             best_distances,
         )
 

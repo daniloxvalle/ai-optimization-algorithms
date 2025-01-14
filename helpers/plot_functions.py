@@ -40,8 +40,7 @@ class PlotFunctions:
 
         fig.show()
 
-    # rot=90 for vertical labels, fontsize=20 default font size
-    def boxplot_sorted(self, df, rot=0, figsize=(12, 6), fontsize=16):
+    def boxplot_sorted(self, df, rot=0, figsize=(12, 6)):
         df2 = df.T
         meds = df2.median().sort_values(ascending=False)
 
@@ -51,7 +50,6 @@ class PlotFunctions:
         axes = df2[meds.index].boxplot(
             figsize=figsize,
             rot=rot,
-            fontsize=fontsize,
             boxprops=dict(linewidth=4, color="cornflowerblue"),
             whiskerprops=dict(linewidth=4, color="cornflowerblue"),
             medianprops=dict(linewidth=4, color="firebrick"),
@@ -65,28 +63,9 @@ class PlotFunctions:
             return_type="axes",
         )
 
-        axes.set_title("Cost of Algorithms", fontsize=fontsize)
+        axes.set_title("Cost of Algorithms")
         # Display the plot
         plt.show()
-
-    def plot_path(self, cities_xy, cities_path, ax):
-
-        # Reeordena as cidades pela ordem do caminho
-        cities = cities_xy[cities_path]
-
-        # Repete a primeira cidade para fechar o ciclo
-        x = cities[:, 0]
-        y = cities[:, 1]
-
-        # Personalização do gráfico
-        ax.set_xlabel("X (Longitude)")
-        ax.set_ylabel("Y (Latitude)")
-        ax.set_title("Caminho")
-
-        # Plotagem das coordenadas interligadas com pontos vermelhos e linhas azuis
-        ax.plot(x, y, color="blue", linestyle="-", linewidth=2)
-        ax.plot(x, y, color="red", marker="o", markersize=8, linestyle="")
-        ax.plot(x[[-1, 0]], y[[-1, 0]], color="orange", linestyle="-", linewidth=2)
 
     def plot_distances(self, iteration_list, distance_list, best_distances, ax):
         x = iteration_list
@@ -139,7 +118,7 @@ class PlotFunctions:
         fig.tight_layout()
 
         # Display the plot
-        plt.show()
+        # plt.show()
 
         # Save the plot to a file
         plt.savefig(filepath)
