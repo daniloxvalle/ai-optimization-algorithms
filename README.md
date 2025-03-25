@@ -92,23 +92,31 @@ Visualizations of the best solutions found by each algorithm are provided below:
 The figures below present the best solutions for the Traveling Salesman Problem (TSP) for each of the tested algorithms.
 
 ### Hill Climbing
-![Hill Climbing Solution](report_images/tsp/best_route_hc.png)
-<div align="center">Figure 6: Hill Climbing - Best Solution</div>
+<div align="center">
+    <img src="report_images/tsp/best_route_hc.png" alt="Hill Climbing Solution">
+    <div><strong>Figure 6: Hill Climbing - Best Solution</strong></div>
+</div>
 <br><br>
 
 ### Hill Climbing Restart
-![Hill Climbing Restart Solution](report_images/tsp/best_route_hc_r.png)
-<div align="center">Figure 7: Hill Climbing Restart - Best Solution</div>
+<div align="center">
+    <img src="report_images/tsp/best_route_hc_r.png" alt="Hill Climbing Restart Solution">
+    <div><strong>Figure 7: Hill Climbing Restart - Best Solution</strong></div>
+</div>
 <br><br>
 
 ### Simulated Annealing
-![Simulated Annealing Solution](report_images/tsp/best_route_sa.png)
-<div align="center">Figure 8: Simulated Annealing - Best Solution</div>
+<div align="center">
+    <img src="report_images/tsp/best_route_sa.png" alt="Simulated Annealing Solution">
+    <div><strong>Figure 8: Simulated Annealing - Best Solution</strong></div>
+</div>
 <br><br>
 
 ### Genetic Algorithm
-![Genetic Algorithm Solution](report_images/tsp/best_route_ga.png)
-<div align="center">Figure 9: Genetic Algorithm - Best Solution</div>
+<div align="center">
+    <img src="report_images/tsp/best_route_ga.png" alt="Genetic Algorithm Solution">
+    <div><strong>Figure 9: Genetic Algorithm - Best Solution</strong></div>
+</div>
 <br><br>
 
 ## Problem 2: Minimizing the Rastrigin Function
@@ -121,7 +129,10 @@ $$
 
 The goal is to minimize this function within the interval \([-5.12, 5.12]\) for both \(x\) and \(y\), where the global minimum is **0**.
 
+<br>
+
 ![Rastrigin Function](report_images/rastrigin/rastrigin_function.png)
+<div align="center">Figure 10: Visualization of the Rastrigin function.</div>
 <br><br>
 
 ### Parameters
