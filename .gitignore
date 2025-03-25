@@ -4,6 +4,7 @@
 notebooks_professor
 _bin
 results_tsp_used
+results_rastrigin_used
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
